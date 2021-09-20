@@ -9,10 +9,10 @@ import PIL
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from datetime import datetime, timezone, timedelta
 
-##########################################################
 ###### WIKIPEDIA
 wikiurl = "https://ru.wikipedia.org/w/api.php"
-querystring = {"action": "query", "format":"json", "titles":"электрон","prop":"extracts","utf8":"true","redirects":"1","exintro":"","explaintext":""}
+request_title = input("Введите слово: ")
+querystring = {"action": "query", "format":"json", "titles":request_title,"prop":"extracts","utf8":"true","redirects":"1","exintro":"","explaintext":""}
 
 payload = ""
 headers = {"cookie": "WMF-Last-Access=14-Aug-2021; WMF-Last-Access-Global=14-Aug-2021; GeoIP=RU%3ASE%3AVladikavkaz%3A43.03%3A44.67%3Av4"}
@@ -20,6 +20,7 @@ headers = {"cookie": "WMF-Last-Access=14-Aug-2021; WMF-Last-Access-Global=14-Aug
 response = requests.request("GET", wikiurl, data=payload, headers=headers, params=querystring).json()
 wotd = jmespath.search("query.pages.*.extract | [0]", response)
 print(wotd)
+#########################################################
 H = 640
 W = 384
 
