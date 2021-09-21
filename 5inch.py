@@ -48,7 +48,7 @@ thintel = ImageFont.truetype('fonts/thintel.ttf', 16)
 superstar = ImageFont.truetype('fonts/superstar.ttf', 16)
 pixeled = ImageFont.truetype('fonts/pixeled.ttf',6)
 dfont = thintel
-greyFont = (230, 230, 230, 128)
+greyFont = (190, 190, 190, 128)
 blackFont = (0, 0, 0)
 LINESTART = 30
 LINEHEIGHT = 20
@@ -63,6 +63,8 @@ R1C1 = R1C2 = R2C1 = R2C2 = R3C1 = R3C2 = 2
 studies = [{"time":"08:30","name":"Русский язык","overdue": True},{"time":"09:30","name":"Литературное чтение","overdue":True},{"time":"10:30","name":"Осетинский язык","overdue":True},{"time":"11:30","name":"ИЗО","overdue":False},{"time":"13:10","name":"Ледовая тренировка","overdue":False},{"time":"16:00","name":"Бросковая","overdue":False}]
 games = [{"home":"TBL","away":"CAR","homescore":"4","awayscore":"3","type":"OT"},{"home":"CBJ","away":"WSH","homescore":"3","awayscore":"5","type":"SO"},{"home":"NSH","away":"MIN","homescore":"2","awayscore":"5","type":""},{"home":"TBL","away":"CAR","homescore":"4","awayscore":"3","type":"OT"},{"home":"CBJ","away":"WSH","homescore":"3","awayscore":"5","type":"SO"},{"home":"NSH","away":"MIN","homescore":"2","awayscore":"5","type":""},{"home":"TBL","away":"CAR","homescore":"4","awayscore":"3","type":"OT"},{"home":"CBJ","away":"WSH","homescore":"3","awayscore":"5","type":"SO"},{"home":"NSH","away":"MIN","homescore":"2","awayscore":"5","type":""}]
 standings = [{"name":"Tampa Bay Lightning","points":"35"},{"name":"Minnesota Wild","points":"33"},{"name":"Washington Capitals","points":"32"},{"name":"Boston Bruins","points":"31"},{"name":"Columbus Blue Jackets","points":"29"},{"name":"Washington Capitals","points":"32"},{"name":"Boston Bruins","points":"31"},{"name":"Columbus Blue Jackets","points":"29"}]
+fieldplayers = [{"name":"Kirill Kaprizov","passes":"39","goals":"29","points":"58"},{"name":"Connor McDavid","passes":"39","goals":"29","points":"58"},{"name":"Artemiy Panarin","passes":"39","goals":"29","points":"58"},{"name":"Alex Ovechkin","passes":"39","goals":"29","points":"58"},{"name":"David Pastrnak","passes":"39","goals":"29","points":"58"},{"name":"Matt Barzal","passes":"39","goals":"29","points":"58"},{"name":"Nikita Kucherov","passes":"39","goals":"29","points":"58"}]
+goalies = [{"name":"Andrei Vasilevskiy","sv":".925","gaa":"2.21"},{"name":"Connor Hellebuyck","sv":".925","gaa":"2.21"},{"name":"Jordan Binnington","sv":".925","gaa":"2.21"},{"name":"Philipp Grubauer","sv":".925","gaa":"2.21"},{"name":"Tristan Jarry","sv":".925","gaa":"2.21"},{"name":"Marc-Andre Fleury","sv":".925","gaa":"2.21"},{"name":"Semyon Varlamov","sv":".925","gaa":"2.21"}]
 
 index1 = 2
 textline = 16
@@ -74,6 +76,11 @@ for lesson in studies:
         overduegrey = blackFont
     draw.text((COL1LEFT, LINESTART + textline * R1C1), lesson['time'] + "   " + lesson['name'], font=thintel, fill=overduegrey, anchor="lm")
     R1C1 = R1C1 + 1
+
+# ROW 1 COLUMN 2
+for line in textwrap.wrap("Матаметика: р.т. с.5 (постройка дома и графическое задание). Прописи: с.7 (доделать). Азбука: с.9 (сказка 'Колобок'). Читающие дети читают сказку", 40):
+    draw.text((COL2LEFT, LINESTART + textline * R1C2), line, font=thintel, fill=blackFont, anchor="lm")
+    R1C2 = R1C2 + 1
 
 #ROW 2 COLUMN 1
 shift = 50
@@ -99,19 +106,39 @@ for team in standings:
 
 
 #ROW 3 COLUMN 1
-for line in textwrap.wrap("Реактивная тяга - сила, возникающая в результате взаимодействия реактивной двигательной установки с истекающей из сопла струёй расширяющейся жидкости или газа, обладающих кинетической энергией", 40):
-    draw.text((COL1LEFT, H/3*2 + textline*R3C1), line, font=thintel, fill=blackFont, anchor="lm")
+draw.text((COL1LEFT, H/3*2 + textline*R3C1), "Field player name", font=thintel, fill=blackFont, anchor="lm")
+draw.text((COL1RIGHT, H/3*2 + textline * R3C1), "P", font=thintel, fill=blackFont, anchor="rm")
+draw.text((COL1RIGHT-25, H / 3 * 2 + textline * R3C1), "G", font=thintel, fill=blackFont, anchor="rm")
+draw.text((COL1RIGHT - 50, H / 3 * 2 + textline * R3C1), "P", font=thintel, fill=blackFont, anchor="rm")
+draw.line((COL1LEFT, H/3*2+textline*(R3C1+1), COL1RIGHT, H/3*2+textline*(R3C1+1)), fill=greyFont)
+R3C1 = R3C1 + 2
+for player in fieldplayers:
+    draw.text((COL1LEFT, H/3*2 + textline*R3C1), player['name'], font=thintel, fill=blackFont, anchor="lm")
+    draw.text((COL1RIGHT, H/3*2 + textline * R3C1), player['points'], font=thintel, fill=blackFont, anchor="rm")
+    draw.text((COL1RIGHT-25, H / 3 * 2 + textline * R3C1), player['goals'], font=thintel, fill=blackFont, anchor="rm")
+    draw.text((COL1RIGHT - 50, H / 3 * 2 + textline * R3C1), player['passes'], font=thintel, fill=blackFont, anchor="rm")
+
     R3C1 = R3C1 + 1
 
 #ROW 3 COLUMN2
-for line in textwrap.wrap("Турбина (фр. turbine от лат. turbo - вихрь, вращение) - лопаточная машина, в которой происходит преобразование кинетической энергии и/или внутренней энергии рабочего тела (пара, газа, воды) в механическую работу на валу. Струя рабочего тела воздействует на лопатки, закреплённые по окружности ротора, и приводит их в движение.", 40):
-    draw.text((COL2LEFT, H/3*2 + textline*R3C2), line, font=thintel, fill=blackFont, anchor="lm")
+
+draw.text((COL2LEFT, H/3*2 + textline*R3C2), "Goalie name", font=thintel, fill=blackFont, anchor="lm")
+draw.text((COL2RIGHT, H/3*2 + textline * R3C2), "GAA", font=thintel, fill=blackFont, anchor="rm")
+draw.text((COL2RIGHT-35, H / 3 * 2 + textline * R3C2), "SV", font=thintel, fill=blackFont, anchor="rm")
+#draw.text((COL2RIGHT - 50, H / 3 * 2 + textline * R3C2), "P", font=thintel, fill=blackFont, anchor="rm")
+draw.line((COL2LEFT, H/3*2+textline*(R3C2+1), COL2RIGHT, H/3*2+textline*(R3C2+1)), fill=greyFont)
+R3C2 = R3C2 + 2
+for goalie in goalies:
+    draw.text((COL2LEFT, H/3*2 + textline*R3C2), goalie['name'], font=thintel, fill=blackFont, anchor="lm")
+    draw.text((COL2RIGHT, H/3*2 + textline * R3C2), goalie['gaa'], font=thintel, fill=blackFont, anchor="rm")
+    draw.text((COL2RIGHT-35, H / 3 * 2 + textline * R3C2), goalie['sv'], font=thintel, fill=blackFont, anchor="rm")
+    #draw.text((COL2RIGHT - 50, H / 3 * 2 + textline * R3C2), goalie['passes'], font=thintel, fill=blackFont, anchor="rm")
+
     R3C2 = R3C2 + 1
-#draw.text((COL2RIGHT, LINESTART), "COL2R", font=dfont, fill=greyFont, anchor="rm")
 index = 2
 textline = 16
-draw.line((COL1LEFT, H/3, COL2RIGHT, H/3), fill=greyFont)
-draw.line((COL1LEFT, H/3*2, COL2RIGHT, H/3*2), fill=greyFont)
+draw.line((COL1LEFT-10, H/3, COL2RIGHT+10, H/3), fill=greyFont)
+draw.line((COL1LEFT-10, H/3*2, COL2RIGHT+10, H/3*2), fill=greyFont)
 
 
 # draw.line((CENTER, LINESTART, CENTER, H), fill=greyFont, width=1)
