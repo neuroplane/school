@@ -2,15 +2,30 @@ import json
 import os
 import sys
 import textwrap
+from time import strptime, strftime, time
+
 import lipsum
 
 import jmespath
 import requests
 import PIL
 from PIL import Image, ImageDraw, ImageFont, ImageOps
+import datetime
 from datetime import datetime, timezone, timedelta
 
 ##########################################################
+### SCHEDULE
+apiurl = "https://x125.ru/api/public/getdayschedule"
+
+payload = ""
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Token 11609376-ff57-401e-88a4-53f4c0904fdb"
+}
+
+schedule = requests.request("POST", apiurl, data=payload, headers=headers).json()
+print(schedule)
+
 ###### WIKIPEDIA
 wikiurl = "https://ru.wikipedia.org/w/api.php"
 querystring = {"action": "query", "format":"json", "titles":"электрон","prop":"extracts","utf8":"true","redirects":"1","exintro":"","explaintext":""}
@@ -38,17 +53,17 @@ robotocond = ImageFont.truetype('fonts/robotocond.ttf', 11)
 mach = ImageFont.truetype('fonts/mach.otf', 40)
 machsmall = ImageFont.truetype('fonts/mach.otf', 25)
 machbig = ImageFont.truetype('fonts/mach.otf', 140)
-unreal = ImageFont.truetype('fonts/unreal.ttf', 20)
+unreal = ImageFont.truetype('fonts/unreal.ttf', 14)
 ubuntu = ImageFont.truetype('fonts/Ubuntu-M.ttf', 65)
 ubuntuс = ImageFont.truetype('fonts/ubuntuc.ttf', 16)
 kroftsman = ImageFont.truetype('fonts/kroftsman.ttf', 150)
 kroftsmansm = ImageFont.truetype('fonts/kroftsman.ttf', 150)
 minecraftia = ImageFont.truetype('fonts/minecraftia.ttf', 8)
 thintel = ImageFont.truetype('fonts/thintel.ttf', 16)
-superstar = ImageFont.truetype('fonts/superstar.ttf', 16)
+superstar = ImageFont.truetype('fonts/superstar.ttf', 12)
 pixeled = ImageFont.truetype('fonts/pixeled.ttf',6)
-dfont = thintel
-greyFont = (190, 190, 190, 128)
+dfont = minecraftia
+greyFont = (128, 128, 128, 128)
 blackFont = (0, 0, 0)
 LINESTART = 30
 LINEHEIGHT = 20
@@ -69,17 +84,17 @@ goalies = [{"name":"Andrei Vasilevskiy","sv":".925","gaa":"2.21"},{"name":"Conno
 index1 = 2
 textline = 16
 # ROW 1 COLUMN 1
-for lesson in studies:
-    if lesson['overdue'] is True:
+for lesson in schedule:
+    if int(lesson['time_to']) >= 0:
         overduegrey = greyFont
     else:
         overduegrey = blackFont
-    draw.text((COL1LEFT, LINESTART + textline * R1C1), lesson['time'] + "   " + lesson['name'], font=thintel, fill=overduegrey, anchor="lm")
+    draw.text((COL1LEFT, LINESTART + textline * R1C1), lesson['time'] + "   " + lesson['lesson_name'], font=dfont, fill=overduegrey, anchor="lm")
     R1C1 = R1C1 + 1
 
 # ROW 1 COLUMN 2
-for line in textwrap.wrap("Матаметика: р.т. с.5 (постройка дома и графическое задание). Прописи: с.7 (доделать). Азбука: с.9 (сказка 'Колобок'). Читающие дети читают сказку", 40):
-    draw.text((COL2LEFT, LINESTART + textline * R1C2), line, font=thintel, fill=blackFont, anchor="lm")
+for line in textwrap.wrap("Математика: с. 24 (устно).Пропись: с.12-13. Азбука: с.19 (вспомнить и пересказать сказку), правило.", 40):
+    draw.text((COL2LEFT, LINESTART + textline * R1C2), line, font=dfont, fill=blackFont, anchor="lm")
     R1C2 = R1C2 + 1
 
 #ROW 2 COLUMN 1
@@ -89,49 +104,49 @@ for game in games:
     lineaway = str(game['away'])
     if game['type'] is not None:
         type = str(game['type'])
-        draw.text((COL1RIGHT-30, H / 3 + textline * R2C1), type, font=thintel, fill=greyFont, anchor="rm")
-    score = str(game['homescore']) + ":" + str(game['awayscore'])
-    draw.text((COL1LEFT+shift, H/3 + textline*R2C1), linehome, font=thintel, fill=blackFont, anchor="lm")
-    draw.text((COL1RIGHT-shift, H / 3 + textline * R2C1), lineaway, font=thintel, fill=blackFont, anchor="rm")
-    draw.text((COL1CENTER, H / 3 + textline * R2C1), score, font=thintel, fill=blackFont, anchor="mm")
+        draw.text((COL1RIGHT-30, H / 3 + textline * R2C1), type, font=dfont, fill=greyFont, anchor="rm")
+    score = str(game['homescore']) + " : " + str(game['awayscore'])
+    draw.text((COL1LEFT+shift, H/3 + textline*R2C1), linehome, font=dfont, fill=blackFont, anchor="lm")
+    draw.text((COL1RIGHT-shift, H / 3 + textline * R2C1), lineaway, font=dfont, fill=blackFont, anchor="rm")
+    draw.text((COL1CENTER, H / 3 + textline * R2C1), score, font=dfont, fill=blackFont, anchor="mm")
     R2C1 = R2C1 + 1
 
 #ROW 2 COLUMN 2
 for team in standings:
     teamname = str(team['name'])
     points = str(team['points'])
-    draw.text((COL2LEFT, H / 3 + textline * R2C2), teamname, font=thintel, fill=blackFont, anchor="lm")
-    draw.text((COL2RIGHT, H / 3 + textline * R2C2), points, font=thintel, fill=blackFont, anchor="rm")
+    draw.text((COL2LEFT, H / 3 + textline * R2C2), teamname, font=dfont, fill=blackFont, anchor="lm")
+    draw.text((COL2RIGHT, H / 3 + textline * R2C2), points, font=dfont, fill=blackFont, anchor="rm")
     R2C2 = R2C2 + 1
 
 
 #ROW 3 COLUMN 1
-draw.text((COL1LEFT, H/3*2 + textline*R3C1), "Field player name", font=thintel, fill=blackFont, anchor="lm")
-draw.text((COL1RIGHT, H/3*2 + textline * R3C1), "P", font=thintel, fill=blackFont, anchor="rm")
-draw.text((COL1RIGHT-25, H / 3 * 2 + textline * R3C1), "G", font=thintel, fill=blackFont, anchor="rm")
-draw.text((COL1RIGHT - 50, H / 3 * 2 + textline * R3C1), "P", font=thintel, fill=blackFont, anchor="rm")
+draw.text((COL1LEFT, H/3*2 + textline*R3C1), "Field player name", font=dfont, fill=blackFont, anchor="lm")
+draw.text((COL1RIGHT, H/3*2 + textline * R3C1), "P", font=dfont, fill=blackFont, anchor="rm")
+draw.text((COL1RIGHT-25, H / 3 * 2 + textline * R3C1), "G", font=dfont, fill=blackFont, anchor="rm")
+draw.text((COL1RIGHT - 50, H / 3 * 2 + textline * R3C1), "P", font=dfont, fill=blackFont, anchor="rm")
 draw.line((COL1LEFT, H/3*2+textline*(R3C1+1), COL1RIGHT, H/3*2+textline*(R3C1+1)), fill=greyFont)
 R3C1 = R3C1 + 2
 for player in fieldplayers:
-    draw.text((COL1LEFT, H/3*2 + textline*R3C1), player['name'], font=thintel, fill=blackFont, anchor="lm")
-    draw.text((COL1RIGHT, H/3*2 + textline * R3C1), player['points'], font=thintel, fill=blackFont, anchor="rm")
-    draw.text((COL1RIGHT-25, H / 3 * 2 + textline * R3C1), player['goals'], font=thintel, fill=blackFont, anchor="rm")
-    draw.text((COL1RIGHT - 50, H / 3 * 2 + textline * R3C1), player['passes'], font=thintel, fill=blackFont, anchor="rm")
+    draw.text((COL1LEFT, H/3*2 + textline*R3C1), player['name'], font=dfont, fill=blackFont, anchor="lm")
+    draw.text((COL1RIGHT, H/3*2 + textline * R3C1), player['points'], font=dfont, fill=blackFont, anchor="rm")
+    draw.text((COL1RIGHT-25, H / 3 * 2 + textline * R3C1), player['goals'], font=dfont, fill=blackFont, anchor="rm")
+    draw.text((COL1RIGHT - 50, H / 3 * 2 + textline * R3C1), player['passes'], font=dfont, fill=blackFont, anchor="rm")
 
     R3C1 = R3C1 + 1
 
 #ROW 3 COLUMN2
 
-draw.text((COL2LEFT, H/3*2 + textline*R3C2), "Goalie name", font=thintel, fill=blackFont, anchor="lm")
-draw.text((COL2RIGHT, H/3*2 + textline * R3C2), "GAA", font=thintel, fill=blackFont, anchor="rm")
-draw.text((COL2RIGHT-35, H / 3 * 2 + textline * R3C2), "SV", font=thintel, fill=blackFont, anchor="rm")
+draw.text((COL2LEFT, H/3*2 + textline*R3C2), "Goalie name", font=dfont, fill=blackFont, anchor="lm")
+draw.text((COL2RIGHT, H/3*2 + textline * R3C2), "GAA", font=dfont, fill=blackFont, anchor="rm")
+draw.text((COL2RIGHT-35, H / 3 * 2 + textline * R3C2), "SV", font=dfont, fill=blackFont, anchor="rm")
 #draw.text((COL2RIGHT - 50, H / 3 * 2 + textline * R3C2), "P", font=thintel, fill=blackFont, anchor="rm")
 draw.line((COL2LEFT, H/3*2+textline*(R3C2+1), COL2RIGHT, H/3*2+textline*(R3C2+1)), fill=greyFont)
 R3C2 = R3C2 + 2
 for goalie in goalies:
-    draw.text((COL2LEFT, H/3*2 + textline*R3C2), goalie['name'], font=thintel, fill=blackFont, anchor="lm")
-    draw.text((COL2RIGHT, H/3*2 + textline * R3C2), goalie['gaa'], font=thintel, fill=blackFont, anchor="rm")
-    draw.text((COL2RIGHT-35, H / 3 * 2 + textline * R3C2), goalie['sv'], font=thintel, fill=blackFont, anchor="rm")
+    draw.text((COL2LEFT, H/3*2 + textline*R3C2), goalie['name'], font=dfont, fill=blackFont, anchor="lm")
+    draw.text((COL2RIGHT, H/3*2 + textline * R3C2), goalie['gaa'], font=dfont, fill=blackFont, anchor="rm")
+    draw.text((COL2RIGHT-35, H / 3 * 2 + textline * R3C2), goalie['sv'], font=dfont, fill=blackFont, anchor="rm")
     #draw.text((COL2RIGHT - 50, H / 3 * 2 + textline * R3C2), goalie['passes'], font=thintel, fill=blackFont, anchor="rm")
 
     R3C2 = R3C2 + 1
@@ -140,7 +155,7 @@ textline = 16
 draw.line((COL1LEFT-10, H/3, COL2RIGHT+10, H/3), fill=greyFont)
 draw.line((COL1LEFT-10, H/3*2, COL2RIGHT+10, H/3*2), fill=greyFont)
 
-
+print(datetime.today().weekday()+1)
 # draw.line((CENTER, LINESTART, CENTER, H), fill=greyFont, width=1)
 # This method will show image in any image viewer
 im.show()
