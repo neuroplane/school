@@ -9,7 +9,7 @@ if os.path.exists(libdir):
     sys.path.append(libdir)
 
 import logging
-from waveshare_epd import epd7in5
+from waveshare_epd import epd5in83
 import time
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import traceback
@@ -47,21 +47,14 @@ goalies_parsed = jmespath.search(
 logging.basicConfig(level=logging.DEBUG)
 
 try:
-    logging.info("epd7in5 Demo")
 
-    epd = epd7in5.EPD()
-    logging.info("init and Clear")
+    epd = epd5in83.EPD()
     epd.init()
     epd.Clear()
 
-    font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
-    font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
     font_thintel = ImageFont.truetype(os.path.join(picdir, 'thintel.ttf'), 16)
     font_machinec = ImageFont.truetype(os.path.join(picdir, 'machinec.otf'), 48)
     font_upheaval = ImageFont.truetype(os.path.join(picdir, 'upheaval.ttf'), 20)
-
-    # Drawing on the Vertical image
-    logging.info("2.Drawing on the Vertical image...")
 
     SCW = epd.height
     SCH = epd.width
