@@ -38,8 +38,8 @@ headers = {"cookie": "WMF-Last-Access=14-Aug-2021; WMF-Last-Access-Global=14-Aug
 response = requests.request("GET", wikiurl, data=payload, headers=headers, params=querystring).json()
 wotd = jmespath.search("query.pages.*.extract | [0]", response)
 #print(wotd)
-H = 600
-W = 448
+H = 800
+W = 480
 
 COL1LEFT = 20
 COL1RIGHT = W/2 - 20
